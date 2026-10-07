@@ -1,0 +1,501 @@
+<header class="cabecera">
+  <nav class="container py-3" aria-label="Navegación principal">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <a class="marca" href="#inicio">
+        AUTO<span>MAX</span>
+      </a>
+
+      <div class="d-flex flex-wrap align-items-center gap-3">
+        <a class="enlace-nav" href="#catalogo">Catálogo</a>
+        <a class="enlace-nav" href="#promociones">Promociones</a>
+        <a class="enlace-nav" href="#resenas">Reseñas</a>
+        <a class="enlace-nav" href="#nosotros">Nosotros</a>
+        <a class="btn btn-primary btn-sm" href="#registro">
+          Registrar vehículo
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section id="inicio" class="portada">
+    <div class="container">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+          <span class="etiqueta-portada">ENCUENTRA TU PRÓXIMO DESTINO</span>
+
+          <h1 class="display-4 fw-bold mt-3">
+            El auto que buscas.<br>
+            El camino que eliges.
+          </h1>
+
+          <p class="lead mt-3">
+            Explora vehículos, conoce sus características y encuentra
+            una alternativa para tu estilo de vida.
+          </p>
+
+          <div class="d-flex flex-wrap gap-3 mt-4">
+            <a class="btn btn-primary btn-lg" href="#catalogo">
+              Explorar catálogo
+            </a>
+
+            <a class="btn btn-outline-light btn-lg" href="#promociones">
+              Ver promociones
+            </a>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="panel-portada">
+            <p class="text-uppercase small mb-4">Tu próxima elección comienza aquí</p>
+
+            <div class="row g-4">
+              <div class="col-6">
+                <strong class="numero-portada">{{ vehiculos().length }}</strong>
+                <span class="d-block">Vehículos en catálogo</span>
+              </div>
+
+              <div class="col-6">
+                <strong class="numero-portada">{{ categorias.length }}</strong>
+                <span class="d-block">Categorías</span>
+              </div>
+
+              <div class="col-12">
+                <hr>
+                <p class="mb-0">
+                  Consulta precios, características y opiniones
+                  desde un solo lugar.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container mt-4">
+    <p class="aviso-demo mb-0">
+      Proyecto académico: vehículos, precios, promociones y reseñas
+      de demostración. Fotografías referenciales.
+    </p>
+  </div>
+
+  <section id="catalogo" class="seccion">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-4">
+        <div>
+          <p class="sobre-titulo">EXPLORA AUTOMAX</p>
+          <h2 class="titulo-seccion mb-0">Nuestro catálogo</h2>
+        </div>
+
+        <span class="text-secondary" aria-live="polite">
+          {{ vehiculosFiltrados().length }} vehículos encontrados
+        </span>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2 mb-4" aria-label="Filtros por categoría">
+        <button
+          type="button"
+          class="btn filtro"
+          [class.filtro-activo]="categoriaSeleccionada() === ''"
+          [attr.aria-pressed]="categoriaSeleccionada() === ''"
+          (click)="filtrarCategoria('')"
+        >
+          Todos
+        </button>
+
+        @for (categoria of categorias; track categoria.id) {
+          <button
+            type="button"
+            class="btn filtro"
+            [class.filtro-activo]="categoriaSeleccionada() === categoria.id"
+            [attr.aria-pressed]="categoriaSeleccionada() === categoria.id"
+            (click)="filtrarCategoria(categoria.id)"
+          >
+            {{ categoria.nombre }}
+          </button>
+        }
+      </div>
+
+      <div class="row g-4">
+        @for (vehiculo of vehiculosFiltrados(); track vehiculo.id) {
+          <div class="col-md-6 col-xl-3">
+            <article class="card tarjeta-vehiculo h-100">
+              <div class="contenedor-imagen">
+                <img
+                  class="card-img-top imagen-vehiculo"
+                  [src]="vehiculo.imagen"
+                  [alt]="'Imagen referencial de ' + vehiculo.nombre"
+                  loading="lazy"
+                  (error)="imagenNoDisponible($event)"
+                >
+
+                <span class="categoria-imagen">
+                  {{ nombreCategoria(vehiculo.categoriaId) }}
+                </span>
+              </div>
+
+              <div class="card-body d-flex flex-column">
+                <p class="text-secondary small mb-2">
+                  {{ vehiculo.marca }} · {{ vehiculo.modelo }} · {{ vehiculo.anio }}
+                </p>
+
+                <h3 class="h5 fw-bold">{{ vehiculo.nombre }}</h3>
+
+                <p class="text-secondary small">
+                  {{ vehiculo.descripcion }}
+                </p>
+
+                <ul class="lista-caracteristicas">
+                  @for (caracteristica of vehiculo.caracteristicas; track $index) {
+                    <li>{{ caracteristica }}</li>
+                  }
+                </ul>
+
+                <div class="mt-auto pt-3">
+                  <p class="precio mb-3">
+                    {{ vehiculo.precio | currency:'PEN':'S/ ':'1.2-2' }}
+                  </p>
+
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary w-100"
+                    (click)="verDetalles(vehiculo)"
+                  >
+                    Ver detalles
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+        } @empty {
+          <div class="col-12">
+            <div class="alert alert-info">
+              No hay vehículos registrados en esta categoría.
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="promociones" class="seccion fondo-suave">
+    <div class="container">
+      <p class="sobre-titulo">OPORTUNIDADES</p>
+      <h2 class="titulo-seccion">Promociones vigentes</h2>
+
+      <div class="row g-4 mt-1">
+        @for (promocion of promocionesVigentes; track promocion.id) {
+          @if (buscarVehiculo(promocion.vehiculoId); as vehiculo) {
+            <div class="col-md-6">
+              <article class="tarjeta-promocion h-100">
+                <span class="badge text-bg-warning mb-3">
+                  {{ promocion.descuentoPorcentaje }} % de descuento
+                </span>
+
+                <h3 class="h4 fw-bold">{{ promocion.titulo }}</h3>
+                <p class="fw-semibold">{{ vehiculo.nombre }}</p>
+                <p>{{ promocion.descripcion }}</p>
+
+                <div class="d-flex flex-wrap align-items-center gap-3">
+                  <span class="text-decoration-line-through">
+                    {{ vehiculo.precio | currency:'PEN':'S/ ':'1.2-2' }}
+                  </span>
+
+                  <strong class="fs-3">
+                    {{ precioPromocional(promocion) | currency:'PEN':'S/ ':'1.2-2' }}
+                  </strong>
+                </div>
+
+                <p class="small mt-3 mb-0">
+                  Vigencia: {{ promocion.fechaInicio }} al {{ promocion.fechaFin }}.
+                  Oferta ficticia para demostración.
+                </p>
+              </article>
+            </div>
+          }
+        } @empty {
+          <div class="col-12">
+            <div class="alert alert-info">
+              No hay promociones vigentes en esta fecha.
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="resenas" class="seccion">
+    <div class="container">
+      <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+        <div>
+          <p class="sobre-titulo">OPINIONES</p>
+          <h2 class="titulo-seccion mb-0">Reseñas de clientes</h2>
+        </div>
+
+        <p class="mb-0">
+          <strong>{{ promedioValoraciones }} / 5</strong>
+          · {{ resenas.length }} reseñas de ejemplo
+        </p>
+      </div>
+
+      <div class="row g-4">
+        @for (resena of resenas; track resena.id) {
+          <div class="col-md-4">
+            <article class="tarjeta-resena h-100">
+              <p
+                class="estrellas"
+                [attr.aria-label]="resena.valoracion + ' de 5 estrellas'"
+              >
+                {{ estrellas(resena.valoracion) }}
+              </p>
+
+              <blockquote class="mb-3">
+                “{{ resena.comentario }}”
+              </blockquote>
+
+              <p class="fw-bold mb-1">{{ resena.cliente }}</p>
+
+              <p class="text-secondary small mb-0">
+                {{ buscarVehiculo(resena.vehiculoId)?.nombre }}
+              </p>
+            </article>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="nosotros" class="seccion fondo-oscuro">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <p class="sobre-titulo text-info">CONOCE AUTOMAX</p>
+          <h2 class="titulo-seccion">Más cerca de tu próximo auto</h2>
+
+          <h3 class="h5 mt-4">Nuestra historia</h3>
+
+          <p>
+            En la propuesta de este proyecto, AutoMax nace como una tienda
+            de vehículos que busca acercar su catálogo a más personas.
+            Su página permite consultar información antes de visitar la tienda.
+          </p>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="row g-4">
+            <div class="col-md-6">
+              <article class="panel-institucional h-100">
+                <h3 class="h4">Misión</h3>
+                <p class="mb-0">
+                  Facilitar la elección de un vehículo mediante información
+                  clara, atención cercana y un catálogo organizado.
+                </p>
+              </article>
+            </div>
+
+            <div class="col-md-6">
+              <article class="panel-institucional h-100">
+                <h3 class="h4">Visión</h3>
+                <p class="mb-0">
+                  Ser una tienda reconocida por la confianza de sus clientes
+                  y por una experiencia de consulta sencilla y accesible.
+                </p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="registro" class="seccion fondo-suave">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <p class="sobre-titulo">GESTIÓN DEL CATÁLOGO</p>
+          <h2 class="titulo-seccion">Registrar vehículo</h2>
+
+          <p class="text-secondary">
+            Completa la información para agregar un vehículo al catálogo.
+            Todos los campos son obligatorios.
+          </p>
+
+          <div class="alert alert-info">
+            Los registros se guardan en memoria y se pierden
+            al recargar la página.
+          </div>
+
+          <p class="small text-secondary">
+            En características, separa cada elemento con una coma.
+            Ejemplo: Aire acondicionado, cámara de retroceso, cinco asientos.
+          </p>
+        </div>
+
+        <div class="col-lg-8">
+          <form
+            class="formulario-registro"
+            (submit)="guardar($event)"
+            novalidate
+          >
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="nombre" class="form-label">Nombre del vehículo</label>
+                <input
+                  id="nombre"
+                  type="text"
+                  class="form-control"
+                  placeholder="Ejemplo: SUV Familiar"
+                  [formField]="formulario.nombre"
+                >
+              </div>
+
+              <div class="col-md-6">
+                <label for="categoria" class="form-label">Categoría</label>
+                <select
+                  id="categoria"
+                  class="form-select"
+                  [formField]="formulario.categoriaId"
+                >
+                  <option value="">Selecciona una categoría</option>
+
+                  @for (categoria of categorias; track categoria.id) {
+                    <option [value]="categoria.id">
+                      {{ categoria.nombre }}
+                    </option>
+                  }
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label for="marca" class="form-label">Marca</label>
+                <input
+                  id="marca"
+                  type="text"
+                  class="form-control"
+                  placeholder="Ejemplo: Atlas"
+                  [formField]="formulario.marca"
+                >
+              </div>
+
+              <div class="col-md-6">
+                <label for="modelo" class="form-label">Modelo</label>
+                <input
+                  id="modelo"
+                  type="text"
+                  class="form-control"
+                  placeholder="Ejemplo: Explorer"
+                  [formField]="formulario.modelo"
+                >
+              </div>
+
+              <div class="col-md-6">
+                <label for="anio" class="form-label">Año</label>
+                <input
+                  id="anio"
+                  type="number"
+                  step="1"
+                  class="form-control"
+                  [formField]="formulario.anio"
+                >
+              </div>
+
+              <div class="col-md-6">
+                <label for="precio" class="form-label">Precio en soles</label>
+                <input
+                  id="precio"
+                  type="number"
+                  step="0.01"
+                  class="form-control"
+                  [formField]="formulario.precio"
+                >
+              </div>
+
+              <div class="col-12">
+                <label for="imagen" class="form-label">URL de la imagen</label>
+                <input
+                  id="imagen"
+                  type="url"
+                  class="form-control"
+                  placeholder="https://sitio.com/vehiculo.jpg"
+                  aria-describedby="ayuda-imagen"
+                  [formField]="formulario.imagen"
+                >
+                <div id="ayuda-imagen" class="form-text">
+                  Pega un enlace directo HTTPS a una imagen.
+                </div>
+              </div>
+
+              <div class="col-12">
+                <label for="descripcion" class="form-label">Descripción</label>
+                <textarea
+                  id="descripcion"
+                  rows="3"
+                  class="form-control"
+                  placeholder="Describe para qué tipo de uso destaca este vehículo."
+                  [formField]="formulario.descripcion"
+                ></textarea>
+              </div>
+
+              <div class="col-12">
+                <label for="caracteristicas" class="form-label">
+                  Características separadas por comas
+                </label>
+                <textarea
+                  id="caracteristicas"
+                  rows="2"
+                  class="form-control"
+                  placeholder="Aire acondicionado, cámara de retroceso, cinco asientos"
+                  [formField]="formulario.caracteristicas"
+                ></textarea>
+              </div>
+            </div>
+
+            @if (
+              (intentoGuardar() || formulario().touched()) &&
+              formulario().invalid()
+            ) {
+              <div class="alert alert-danger mt-4" role="alert">
+                <p class="fw-bold mb-2">Revisa estos campos:</p>
+                <ul class="mb-0">
+                  @for (error of formulario().errorSummary(); track $index) {
+                    <li>{{ error.message }}</li>
+                  }
+                </ul>
+              </div>
+            }
+
+            <div class="d-flex flex-wrap gap-3 mt-4">
+              <button
+                type="submit"
+                class="btn btn-primary px-4"
+                [disabled]="procesando()"
+              >
+                {{ procesando() ? 'Procesando...' : 'Guardar vehículo' }}
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                [disabled]="procesando()"
+                (click)="limpiarFormulario()"
+              >
+                Limpiar formulario
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="pie-pagina">
+  <div class="container d-flex flex-wrap justify-content-between gap-3">
+    <span class="fw-bold">AUTOMAX</span>
+    <span>Proyecto académico · Desarrollo de Aplicaciones Web</span>
+    <a href="#inicio">Volver al inicio ↑</a>
+  </div>
+</footer>
